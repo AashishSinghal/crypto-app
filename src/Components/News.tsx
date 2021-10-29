@@ -1,9 +1,10 @@
 import * as React from "react";
 import { INews } from "../Types";
-import { Select, Typography, Row, Col, Avatar, Card, Spin, Alert } from "antd";
+import { Select, Typography, Row, Col, Avatar, Card } from "antd";
 import moment from "moment";
 import { useGetCryptoNewsQuery } from "../Services/cryptoNewsApi";
 import { useGetCryptosQuery } from "../Services/cryptoApi";
+import Loader from "./Loader";
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -20,11 +21,7 @@ const News = ({ simplified }: INews) => {
   const { data } = useGetCryptosQuery(100);
 
   if (!cryptoNews?.value)
-    return (
-      <Spin tip="Loading...">
-        <Alert message="Loading Crypto Related News..." />
-      </Spin>
-    );
+    return <Loader message="Loading Crypto Related News..." />;
   return (
     <Row gutter={[24, 24]}>
       {!simplified && (

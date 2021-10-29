@@ -2,9 +2,10 @@ import * as React from "react";
 import { ICryptocurrencies } from "../Types";
 import millify from "millify";
 import { Link } from "react-router-dom";
-import { Card, Row, Col, Input, Spin, Alert } from "antd";
+import { Card, Row, Col, Input } from "antd";
 import { useGetCryptosQuery } from "../Services/cryptoApi";
 import { SearchOutlined } from "@ant-design/icons";
+import Loader from "./Loader";
 
 const Cryptocurrencies = ({ simplified }: ICryptocurrencies) => {
   const count = simplified ? 12 : 100;
@@ -21,11 +22,7 @@ const Cryptocurrencies = ({ simplified }: ICryptocurrencies) => {
   }, [cryptosList, searchTerm]);
 
   if (isFetching) {
-    return (
-      <Spin tip="Loading...">
-        <Alert message="Loading list of Cryptocurrencies..." />
-      </Spin>
-    );
+    return <Loader message="Loading list of Cryptocurrencies..." />;
   }
   return (
     <>

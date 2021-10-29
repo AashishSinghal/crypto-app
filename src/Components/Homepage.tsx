@@ -1,23 +1,17 @@
 import * as React from "react";
 import millify from "millify";
-import { Typography, Row, Col, Statistic, Spin, Alert } from "antd";
+import { Typography, Row, Col, Statistic} from "antd";
 import { Link } from "react-router-dom";
 import { useGetCryptosQuery } from "../Services/cryptoApi";
 import { Cryptocurrencies, News } from "../Components";
+import Loader from "./Loader";
 
 const Homepage = () => {
   const { data, isFetching } = useGetCryptosQuery(10);
 
   const globalStats = data?.data?.stats;
 
-  if (isFetching)
-    return (
-      <Spin tip="Loading...">
-        <Alert
-          message="Loading the Crypto Market Data..."
-        />
-      </Spin>
-    );
+  if (isFetching) return <Loader message="Loading the Crypto Market Data..." />;
 
   return (
     <>
@@ -55,7 +49,7 @@ const Homepage = () => {
       </Row>
       <div className="home-heading-container">
         <Typography.Title level={2} className="home-title">
-          Top 10 Cryptocurrencies in the world.
+          Top 12 Cryptocurrencies in the world.
         </Typography.Title>
         <Typography.Title level={2} className="show-more">
           <Link to="/cryptocurrencies">Show More</Link>

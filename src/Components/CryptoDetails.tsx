@@ -2,7 +2,7 @@ import * as React from "react";
 import HTMLReactParser from "html-react-parser";
 import { useParams } from "react-router";
 import millify from "millify";
-import { Col, Row, Typography, Select, Spin, Alert } from "antd";
+import { Col, Row, Typography, Select } from "antd";
 import {
   MoneyCollectOutlined,
   DollarCircleOutlined,
@@ -15,7 +15,12 @@ import {
   ThunderboltOutlined,
 } from "@ant-design/icons";
 import { IParams } from "../Types";
-import { useGetCryptoDetailsQuery } from "../Services/cryptoApi";
+import {
+  useGetCryptoDetailsQuery,
+  useGetCryptoHistoryQuery,
+} from "../Services/cryptoApi";
+import LineChart from "./LineChart";
+import Loader from "./Loader";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -24,15 +29,15 @@ const CryptoDetails = () => {
   const { coinId } = useParams<IParams>();
   const [timePeriod, setTimePeriod] = React.useState("7d");
   const { data, isFetching } = useGetCryptoDetailsQuery(coinId);
+  const { data: coinHistory } = useGetCryptoHistoryQuery({
+    coinId,
+    timePeriod,
+  });
   const cryptoDetails = data?.data?.coin;
   const time = ["3h", "24h", "7d", "30d", "1y", "3m", "3y", "5y"];
 
   if (isFetching) {
-    return (
-      <Spin tip="Loading...">
-        <Alert message="Loading Crypto Data..." />
-      </Spin>
-    );
+    return <Loader message="Loading Crypto Data..." />;
   }
   const stats = [
     {
@@ -105,6 +110,7 @@ const CryptoDetails = () => {
         defaultValue="7d"
         className="select-timeperiod"
         placeholder="Select time period"
+        // value={timePeriod}
         onChange={(value) => setTimePeriod(value)}
       >
         {time.map((date) => (
@@ -113,6 +119,72 @@ const CryptoDetails = () => {
           </Option>
         ))}
       </Select>
+      <LineChart
+        coinHistory={coinHistory}
+        currentPrice={millify(cryptoDetails.price)}
+        coinName={cryptoDetails.name}
+      />
+      <br />
+      <br />
+      <Col className="stats-container">
+        <Col className="coin-value-statistics">
+          <Col className="coin-value-statistics-heading">
+            <Title level={3} className="coin-details-headings">
+              {cryptoDetails.name} Value Statistics
+            </Title>
+            <p>An overview showing the stats of {cryptoDetails.name}.</p>
+          </Col>
+          {stats.map(({ icon, title, value }) => (
+            <Col className="coin-stats">
+              <Col className="coin-stats-name">
+                <Text>{icon}</Text>
+                <Text>{title}</Text>
+              </Col>
+              <Text className="stats">{value}</Text>
+            </Col>
+          ))}
+        </Col>
+        <Col className="other-stats-info">
+          <Col className="coin-value-statistics-heading">
+            <Title level={3} className="coin-details-headings">
+              Other Statistics
+            </Title>
+            <p>An overview showing the stats of ALL Cryptocurrencies.</p>
+          </Col>
+          {genericStats.map(({ icon, title, value }) => (
+            <Col className="coin-stats">
+              <Col className="coin-stats-name">
+                <Text>{icon}</Text>
+                <Text>{title}</Text>
+              </Col>
+              <Text className="stats">{value}</Text>
+            </Col>
+          ))}
+        </Col>
+      </Col>
+      <Col className="coin-desc-link">
+        <Row className="coin-dash-desc">
+          <Title level={3} className="coin-details-heading">
+            What is {cryptoDetails.name}?
+            {HTMLReactParser(cryptoDetails.description)}
+          </Title>
+        </Row>
+      </Col>
+      <Col className="coin-links">
+        <Title level={3} className="coin-details-heading">
+          {cryptoDetails.name} Links
+        </Title>
+        {cryptoDetails.links.map((link: any) => (
+          <Row className="coin-link" key={link.name}>
+            <Title level={5} className="link-name">
+              {link.type}
+            </Title>
+            <a href={link.url} target="_blank" rel="noreferrer">
+              {link.name}
+            </a>
+          </Row>
+        ))}
+      </Col>
     </Col>
   );
 };

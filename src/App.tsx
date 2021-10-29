@@ -38,7 +38,7 @@ function App() {
             level={5}
             style={{ color: "white", textAlign: "center" }}
           >
-            Cryptoverse <br />
+            CryptoWatch <br />
             All Rights Reserved
           </Typography.Title>
           <Space>

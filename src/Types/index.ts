@@ -8,3 +8,14 @@ export interface INews {
 export interface IParams {
   coinId: string;
 }
+
+export interface ILineChartProps {
+  coinHistory: any;
+  currentPrice: any;
+  coinName: any;
+}
+
+export interface ILoaderProps {
+  tip?: string;
+  message: string;
+}

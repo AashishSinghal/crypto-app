@@ -11,29 +11,56 @@ import {
 import icon from "../Images/crypto.png";
 
 const Navbar = () => {
+  const [activeMenu, setActiveMenu] = React.useState(true);
+  const [screenSize, setScreenSize] = React.useState<any>(null);
+
+  // useEffect to only handle Window resize with any dependency
+  React.useEffect(() => {
+    const handleResize = () => setScreenSize(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  React.useEffect(() => {
+    if (screenSize < 801) {
+      setActiveMenu(false);
+    } else {
+      setActiveMenu(true);
+    }
+  }, [screenSize]);
+
   return (
     <div className="nav-container">
       <div className="logo-container">
         <Avatar className="avatar-icon" src={icon} size="large" />
         <Typography.Title level={2} className="logo">
-          <Link to="/">CryptoVerse</Link>
+          <Link to="/">CryptoWatch</Link>
         </Typography.Title>
+
+        <Button
+          onClick={() => setActiveMenu(!activeMenu)}
+          className="menu-control-container"
+        >
+          <MenuOutlined />
+        </Button>
       </div>
-      {/* <Button className="menu-control-container"></Button> */}
-      <Menu theme="dark">
-        <Menu.Item icon={<HomeOutlined />}>
-          <Link to="/">Home</Link>
-        </Menu.Item>
-        <Menu.Item icon={<FundOutlined />}>
-        <Link to="/cryptocurrencies">Cryptocurrencies</Link>
-        </Menu.Item>
-        <Menu.Item icon={<MoneyCollectOutlined />}>
-          <Link to="/exchange">Exchange</Link>
-        </Menu.Item>
-        <Menu.Item icon={<BulbOutlined />}>
-          <Link to="/news">News</Link>
-        </Menu.Item>
-      </Menu>
+      {activeMenu && (
+        <Menu theme="dark">
+          <Menu.Item icon={<HomeOutlined />}>
+            <Link to="/">Home</Link>
+          </Menu.Item>
+          <Menu.Item icon={<FundOutlined />}>
+            <Link to="/cryptocurrencies">Cryptocurrencies</Link>
+          </Menu.Item>
+          <Menu.Item icon={<MoneyCollectOutlined />}>
+            <Link to="/exchanges">Exchanges</Link>
+          </Menu.Item>
+          <Menu.Item icon={<BulbOutlined />}>
+            <Link to="/news">News</Link>
+          </Menu.Item>
+        </Menu>
+      )}
     </div>
   );
 };
